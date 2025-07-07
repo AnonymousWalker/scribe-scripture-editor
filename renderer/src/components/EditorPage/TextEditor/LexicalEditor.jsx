@@ -31,11 +31,13 @@ export default function LexicalEditor({
     editorRef.current?.setUsj(updatedUsj);
     onUsjChange(updatedUsj);
   };
+
   useEffect(() => {
     if (usjInput) {
       setUsj(usjInput);
     }
   }, [usjInput]);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (usj && editorRef.current) {
@@ -49,9 +51,24 @@ export default function LexicalEditor({
     setNavRef(scrRef);
   }, [scrRef, setNavRef]);
 
+  // Enhanced RTL detection and styling
+  const isRTL = textDirection === 'rtl';
+  const editorContainerStyle = {
+    direction: isRTL ? 'rtl' : 'ltr',
+    textAlign: isRTL ? 'right' : 'left',
+  };
+
+  const noteEditorStyle = {
+    direction: isRTL ? 'rtl' : 'ltr',
+    textAlign: isRTL ? 'right' : 'left',
+  };
+
   return (
-    <div className="flex-grow flex flex-col overflow-hidden">
-      <div className="flex-grow flex flex-col bg-gray-100 overflow-hidden">
+    <div className={`flex-grow flex flex-col overflow-hidden ${isRTL ? 'rtl-editor-container' : ''}`}>
+      <div
+        className={`flex-grow flex flex-col bg-gray-100 overflow-hidden ${isRTL ? 'rtl-content-editable' : ''}`}
+        style={editorContainerStyle}
+      >
         <Editor
           usjInput={usj}
           ref={editorRef}
@@ -67,9 +84,13 @@ export default function LexicalEditor({
       </div>
 
       {isNoteEditorOpen && (
-        <div className="flex-shrink-0 h-[300px] overflow-y-auto">
+        <div
+          className={`flex-shrink-0 h-[300px] overflow-y-auto ${isRTL ? 'rtl-scrollbar' : ''}`}
+          style={noteEditorStyle}
+        >
           <NotesEditorHeader
             onClose={() => setIsNoteEditorOpen(false)}
+            isRTL={isRTL}
           />
           <NoteEditor
             usj={usj}

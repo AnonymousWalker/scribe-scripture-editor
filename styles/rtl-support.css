@@ -1,0 +1,307 @@
+/* RTL Support Styles for Scripture Editor */
+
+/* RTL Editor Container */
+.rtl-editor-container {
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL Text Alignment */
+.rtl-text {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Verse Numbers */
+.rtl-verse-number {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+/* RTL Chapter Numbers */
+.rtl-chapter-number {
+  margin-left: 0;
+  margin-right: 16px;
+}
+
+/* RTL Note Callers */
+.rtl-note-caller {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+/* RTL Toolbar */
+.rtl-toolbar {
+  flex-direction: row-reverse;
+}
+
+/* RTL Menu Items */
+.rtl-menu {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Scrollbar */
+.rtl-scrollbar {
+  direction: rtl;
+}
+
+/* RTL Input Fields */
+.rtl-input {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Buttons */
+.rtl-button {
+  flex-direction: row-reverse;
+}
+
+/* RTL Icons in Buttons */
+.rtl-button-icon {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+/* RTL Select Dropdowns */
+.rtl-select {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Content Editable */
+.rtl-content-editable {
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL Paragraphs */
+.rtl-paragraph {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Lists */
+.rtl-list {
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL List Items */
+.rtl-list-item {
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL Headers */
+.rtl-header {
+  text-align: right;
+  direction: rtl;
+}
+
+/* RTL Navigation */
+.rtl-navigation {
+  flex-direction: row-reverse;
+}
+
+/* RTL Spacing Utilities */
+.rtl-space-x-reverse>*+* {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.rtl-space-y-reverse>*+* {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* RTL Flex Utilities */
+.rtl-flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.rtl-justify-start {
+  justify-content: flex-start;
+}
+
+.rtl-justify-end {
+  justify-content: flex-end;
+}
+
+/* RTL Text Utilities */
+.rtl-text-left {
+  text-align: left;
+}
+
+.rtl-text-right {
+  text-align: right;
+}
+
+/* RTL Margin Utilities */
+.rtl-ml-0 {
+  margin-left: 0;
+}
+
+.rtl-mr-0 {
+  margin-right: 0;
+}
+
+.rtl-ml-2 {
+  margin-left: 0.5rem;
+}
+
+.rtl-mr-2 {
+  margin-right: 0.5rem;
+}
+
+.rtl-ml-4 {
+  margin-left: 1rem;
+}
+
+.rtl-mr-4 {
+  margin-right: 1rem;
+}
+
+/* RTL Padding Utilities */
+.rtl-pl-0 {
+  padding-left: 0;
+}
+
+.rtl-pr-0 {
+  padding-right: 0;
+}
+
+.rtl-pl-2 {
+  padding-left: 0.5rem;
+}
+
+.rtl-pr-2 {
+  padding-right: 0.5rem;
+}
+
+/* RTL Border Utilities */
+.rtl-border-l-0 {
+  border-left: 0;
+}
+
+.rtl-border-r-0 {
+  border-right: 0;
+}
+
+.rtl-border-l-2 {
+  border-left: 0;
+  border-right: 2px;
+}
+
+.rtl-border-r-2 {
+  border-right: 0;
+  border-left: 2px;
+}
+
+/* RTL Focus States */
+.rtl-focus\:border-l-0:focus {
+  border-left: 0;
+}
+
+.rtl-focus\:border-r-0:focus {
+  border-right: 0;
+}
+
+/* RTL Hover States */
+.rtl-hover\:border-l-0:hover {
+  border-left: 0;
+}
+
+.rtl-hover\:border-r-0:hover {
+  border-right: 0;
+}
+
+/* RTL Active States */
+.rtl-active\:border-l-0:active {
+  border-left: 0;
+}
+
+.rtl-active\:border-r-0:active {
+  border-right: 0;
+}
+
+/* RTL Disabled States */
+.rtl-disabled\:border-l-0:disabled {
+  border-left: 0;
+}
+
+.rtl-disabled\:border-r-0:disabled {
+  border-right: 0;
+}
+
+/* RTL Responsive Utilities */
+@media (min-width: 640px) {
+  .rtl-sm\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-sm\:text-right {
+    text-align: right;
+  }
+
+  .rtl-sm\:text-left {
+    text-align: left;
+  }
+}
+
+@media (min-width: 768px) {
+  .rtl-md\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-md\:text-right {
+    text-align: right;
+  }
+
+  .rtl-md\:text-left {
+    text-align: left;
+  }
+}
+
+@media (min-width: 1024px) {
+  .rtl-lg\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-lg\:text-right {
+    text-align: right;
+  }
+
+  .rtl-lg\:text-left {
+    text-align: left;
+  }
+}
+
+@media (min-width: 1280px) {
+  .rtl-xl\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-xl\:text-right {
+    text-align: right;
+  }
+
+  .rtl-xl\:text-left {
+    text-align: left;
+  }
+}
+
+/* RTL Print Styles */
+@media print {
+  .rtl-print\:flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .rtl-print\:text-right {
+    text-align: right;
+  }
+
+  .rtl-print\:text-left {
+    text-align: left;
+  }
+}
