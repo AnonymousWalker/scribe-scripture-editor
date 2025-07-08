@@ -137,7 +137,7 @@ export default function ReferenceContextProvider({ children }) {
                       break;
                     case 'textTranslation':
                       setBookmarksVerses(resources.project?.textTranslation?.bookMarks);
-                      setProjectScriptureDir(resources.project?.textTranslation?.scriptDirection?.toUpperCase());
+                      setProjectScriptureDir("rtl");//resources.project?.textTranslation?.scriptDirection?.toUpperCase());
                       setSelectedFont(resources.project?.textTranslation?.font);
                       setEditorFontSize(resources.project?.textTranslation?.fontSize || 1);
                       break;
