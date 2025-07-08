@@ -23,6 +23,7 @@ export default function ImportPopUp(props) {
     closePopUp,
     projectType,
     replaceConformation,
+    initialFiles = [],
   } = props;
 
   const cancelButtonRef = useRef(null);
@@ -136,7 +137,9 @@ export default function ImportPopUp(props) {
       }
 
       case 'Audio': {
-        const usfm = fs.readFileSync(filePath, 'utf8');
+        let usfm = fs.readFileSync(filePath, 'utf8');
+        // Remove empty \s5 markers on their own line
+        usfm = usfm.replace(/^\s5\s*\n/gm, '');
         const myUsfmParser = new grammar.USFMParser(usfm, grammar.LEVEL.RELAXED);
         const isJsonValid = myUsfmParser.validate();
         if (isJsonValid) {
@@ -180,7 +183,9 @@ export default function ImportPopUp(props) {
       }
 
       case 'Juxta': {
-        const file = fs.readFileSync(filePath, 'utf8');
+        let file = fs.readFileSync(filePath, 'utf8');
+        // Remove empty \s5 markers on their own line
+        file = file.replace(/^\s5\s*\n/gm, '');
         const filename = filePath.split(/[(\\)?(/)?]/gm).pop();
 
         const fileExt = filename.split('.').pop()?.toLowerCase();
@@ -297,10 +302,16 @@ export default function ImportPopUp(props) {
 
   useEffect(() => {
     if (open) {
-      openFileDialogSettingData();
+      if (initialFiles && initialFiles.length > 0) {
+        setShow(true);
+        setFolderPath(initialFiles);
+        getBooks(initialFiles);
+      } else {
+        openFileDialogSettingData();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, initialFiles]);
   return (
     <>
       <Transition
@@ -429,4 +440,5 @@ ImportPopUp.propTypes = {
   closePopUp: PropTypes.func,
   projectType: PropTypes.string,
   replaceConformation: PropTypes.bool,
+  initialFiles: PropTypes.array,
 };

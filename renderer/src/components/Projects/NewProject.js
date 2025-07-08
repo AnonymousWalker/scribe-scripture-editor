@@ -124,6 +124,8 @@ export default function NewProject({ call, project, closeEdit }) {
   const [projectLangData, setProjectLangData] = React.useState({});
   const [openPopUp, setOpenPopUp] = React.useState(false);
   const [replaceWarning, setReplaceWarning] = React.useState(false);
+  const [rcImportFiles, setRcImportFiles] = React.useState([]);
+  const [openRcImportPopUp, setOpenRcImportPopUp] = React.useState(false);
 
   const [error, setError] = React.useState({
     projectName: {},
@@ -299,6 +301,47 @@ export default function NewProject({ call, project, closeEdit }) {
   function closeImportPopUp() {
     setOpenPopUp(false);
   }
+
+  function openImportFromRC() {
+    // Open file dialog for .zip files
+    const { dialog } = window.require('@electron/remote');
+    dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [{ name: 'zip files', extensions: ['zip'] }],
+    }).then((chosen) => {
+      if (chosen.filePaths && chosen.filePaths.length > 0) {
+        const zipPath = chosen.filePaths[0];
+        const path = window.require('path');
+        const fs = window.require('fs');
+        const os = window.require('os');
+        const AdmZip = window.require('adm-zip');
+        const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rc-import-'));
+        const zip = new AdmZip(zipPath);
+        zip.extractAllTo(tempDir, true);
+        // Find all USFM files in the extracted directory
+        const walkSync = (dir, filelist = []) => {
+          fs.readdirSync(dir).forEach(file => {
+            const filepath = path.join(dir, file);
+            if (fs.statSync(filepath).isDirectory()) {
+              walkSync(filepath, filelist);
+            } else if (file.toLowerCase().endsWith('.usfm') || file.toLowerCase().endsWith('.sfm')) {
+              filelist.push(filepath);
+            }
+          });
+          return filelist;
+        };
+        const usfmFiles = walkSync(tempDir);
+        setRcImportFiles(usfmFiles);
+        setOpenRcImportPopUp(true);
+      }
+    });
+  }
+
+  function closeRcImportPopUp() {
+    setOpenRcImportPopUp(false);
+    setRcImportFiles([]);
+  }
+
   const loadData = async (project) => {
     logger.debug('NewProject.js', 'In loadData for loading current project details in Edit page');
     setNewProjectFields({
@@ -464,9 +507,18 @@ export default function NewProject({ call, project, closeEdit }) {
                   >
                     {t('btn-import-books')}
                   </button>
+                  <button
+                    type="button"
+                    className="rounded-full px-3 py-1 bg-primary hover:bg-black ml-2
+                      text-white text-xs uppercase font-semibold"
+                    onClick={openImportFromRC}
+                  >
+                    Import from RC
+                  </button>
                   {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
                   {call !== 'edit' && headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
                   <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
+                  <ImportPopUp open={openRcImportPopUp} closePopUp={closeRcImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} initialFiles={rcImportFiles} />
                 </div>
               </div>
 
