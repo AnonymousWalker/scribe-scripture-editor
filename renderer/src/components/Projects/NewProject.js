@@ -23,6 +23,7 @@ import { classNames } from '../../util/classNames';
 import * as logger from '../../logger';
 import ImportPopUp from './ImportPopUp';
 import burrito from '../../lib/BurritoTemplate.json';
+import { parseManifestYaml } from './utils/yamlUtils';
 // eslint-disable-next-line no-unused-vars
 const solutions = [
   {
@@ -318,19 +319,50 @@ export default function NewProject({ call, project, closeEdit }) {
         const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'rc-import-'));
         const zip = new AdmZip(zipPath);
         zip.extractAllTo(tempDir, true);
-        // Find all USFM files in the extracted directory
+
+        // Find all files in the extracted directory using walkSync
         const walkSync = (dir, filelist = []) => {
           fs.readdirSync(dir).forEach(file => {
             const filepath = path.join(dir, file);
             if (fs.statSync(filepath).isDirectory()) {
               walkSync(filepath, filelist);
-            } else if (file.toLowerCase().endsWith('.usfm') || file.toLowerCase().endsWith('.sfm')) {
+            } else {
               filelist.push(filepath);
             }
           });
           return filelist;
         };
-        const usfmFiles = walkSync(tempDir);
+        const allFiles = walkSync(tempDir);
+        // Find manifest.yaml (case-insensitive)
+        const manifestPath = allFiles.find(f => path.basename(f).toLowerCase() === 'manifest.yaml');
+
+        // Parse manifest.yaml and print dublin_core.language
+        if (manifestPath) {
+          const manifest = parseManifestYaml(manifestPath);
+          if (manifest && manifest.dublin_core && manifest.dublin_core.language) {
+            const lang = manifest.dublin_core.language;
+            // Set language dropdown if found in manifest
+            if (lang.identifier) {
+              const foundLang = languages.find(l => l.lc === lang.identifier);
+              if (foundLang) {
+                setLanguage(foundLang);
+              }
+            }
+            // Set project name for new project if available
+            if (call === 'new' && manifest.dublin_core.title) {
+              const abbreviation = getAbbreviation(manifest.dublin_core.title);
+              setNewProjectFields({
+                ...newProjectFields,
+                projectName: manifest.dublin_core.title,
+                abbreviation,
+              });
+            }
+            // Print to console
+            console.log('Manifest language:', lang);
+          }
+        }
+        // Find all USFM files in the extracted directory
+        const usfmFiles = allFiles.filter(f => f.toLowerCase().endsWith('.usfm') || f.toLowerCase().endsWith('.sfm'));
         setRcImportFiles(usfmFiles);
         setOpenRcImportPopUp(true);
       }
