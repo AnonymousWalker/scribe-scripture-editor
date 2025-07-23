@@ -120,7 +120,8 @@ export default function ImportPopUp(props) {
       switch (projectType) {
       case 'Translation': {
         const usfm = fs.readFileSync(filePath, 'utf8');
-        const { isValid, validUSFM, bookCode } = await validateUsfm(usfm);
+        const cleanedUsfm = usfm.replace(/\\s5\s*\n?/g, '');
+        const { isValid, validUSFM, bookCode } = await validateUsfm(cleanedUsfm);
         if (isValid) {
           // If importing a USFM file then ask user for replace of USFM with the new content or not
           replaceConformation(true);
