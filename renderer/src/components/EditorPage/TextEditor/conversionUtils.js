@@ -47,6 +47,13 @@ export async function validateUsfm(usfm) {
   }
 }
 
+export async function extractBookCode(usfm) {
+  if (!usfmParserInstance) {
+    usfmParserInstance = await initializeParser();
+  }
+  return usfmParserInstance.extractBookCode(usfm);
+}
+
 initializeParser()
   .then(() => {
     // eslint-disable-next-line no-console

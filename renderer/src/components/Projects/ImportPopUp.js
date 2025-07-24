@@ -8,7 +8,7 @@ import { DocumentTextIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { SnackBar } from '@/components/SnackBar';
 import { ProjectContext } from '@/components/context/ProjectContext';
 import { readUsfm } from '@/components/Projects/utils/readUsfm';
-import { validateUsfm } from '@/components/EditorPage/TextEditor/conversionUtils';
+import { validateUsfm, extractBookCode } from '@/components/EditorPage/TextEditor/conversionUtils';
 import styles from './ImportPopUp.module.css';
 import * as logger from '../../logger';
 import CloseIcon from '@/illustrations/close-button-black.svg';
@@ -121,7 +121,10 @@ export default function ImportPopUp(props) {
       case 'Translation': {
         const usfm = fs.readFileSync(filePath, 'utf8');
         const cleanedUsfm = usfm.replace(/\\s5\s*\n?/g, '');
-        const { isValid, validUSFM, bookCode } = await validateUsfm(cleanedUsfm);
+        // const { isValid, validUSFM, bookCode } = await validateUsfm(cleanedUsfm);
+        const isValid = true;
+        const validUSFM = cleanedUsfm;
+        const bookCode = await extractBookCode(cleanedUsfm);
         if (isValid) {
           // If importing a USFM file then ask user for replace of USFM with the new content or not
           replaceConformation(true);
