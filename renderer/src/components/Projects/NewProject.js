@@ -357,8 +357,6 @@ export default function NewProject({ call, project, closeEdit }) {
                 abbreviation,
               });
             }
-            // Print to console
-            console.log('Manifest language:', lang);
           }
         }
         // Find all USFM files in the extracted directory
