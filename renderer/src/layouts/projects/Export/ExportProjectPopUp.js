@@ -230,6 +230,68 @@ export default function ExportProjectPopUp(props) {
     }
   };
 
+  // New method to export USFM files with 3-character names
+  const exportUsfmFiles = async () => {
+    const fs = window.require('fs');
+    if (folderPath && fs.existsSync(folderPath)) {
+      setValid(false);
+      logger.debug('ExportProjectPopUp.js', 'Inside exportUsfmFiles');
+      await localforage.getItem('userProfile').then(async (value) => {
+        const path = require('path');
+        const newpath = localStorage.getItem('userPath');
+        const folder = path.join(newpath, packageInfo.name, 'users', value.username, 'projects', `${project.name}_${project.id[0]}`);
+        const data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
+        const metadata = JSON.parse(data);
+        const { username } = value;
+        setMetadata({
+          metadata, folder, path, fs, username,
+        });
+        setExportstart(true);
+
+        // Find all USFM files with 3-character names
+        const { walk } = await import('./ExportUtils');
+        const allFiles = await walk(folder, path, fs);
+        // Regex: matches .../ingredients/XXX.usfm where XXX is 3 alphanumeric chars
+        const usfmFiles = allFiles.filter((file) => {
+          const match = file.match(/[\\/]ingredients[\\/](\w{3})\.usfm$/i);
+          return match;
+        });
+        setTotalExports(usfmFiles.length);
+        const fse = window.require('fs-extra');
+        try {
+          for (let i = 0; i < usfmFiles.length; i += 1) {
+            const file = usfmFiles[i];
+            const fileName = file.split(/[\\/]/).pop();
+            const destDir = path.join(folderPath, project.name);
+            if (!fs.existsSync(destDir)) {
+              fs.mkdirSync(destDir, { recursive: true });
+            }
+            fse.copySync(file, path.join(destDir, fileName));
+            setTotalExported(i + 1);
+          }
+          setNotify('success');
+          setSnackText(t('dynamic-msg-export-success'));
+          setOpenSnackBar(true);
+          logger.debug('ExportProjectPopUp.js', 'USFM files exported successfully');
+        } catch (err) {
+          logger.error('ExportProjectPopUp.js', `Failed to export USFM files: ${err}`);
+          setNotify('failure');
+          setSnackText(t('dynamic-msg-export-fail'));
+          setOpenSnackBar(true);
+        } finally {
+          setExportstart(false);
+          closePopUp(false);
+        }
+      });
+    } else {
+      logger.warn('ExportProjectPopUp.js', 'Invalid Path');
+      setValid(true);
+      setNotify('failure');
+      setSnackText(t('dynamic-msg-invalid-path'));
+      setOpenSnackBar(true);
+    }
+  };
+
   return (
     <>
       <Transition
@@ -437,7 +499,8 @@ export default function ExportProjectPopUp(props) {
                         </button>
                         <button
                           disabled={exportStart}
-                          onClick={() => exportBible()}
+                          // onClick={() => exportBible()}
+                          onClick={() => exportUsfmFiles()}
                           aria-label="export-projects"
                           type="button"
                           className="py-2 px-7 rounded shadow bg-success text-white uppercase text-xs tracking-widest font-semibold"
