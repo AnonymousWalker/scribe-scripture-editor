@@ -126,6 +126,7 @@ export default function NewProject({ call, project, closeEdit }) {
   const [openPopUp, setOpenPopUp] = React.useState(false);
   const [replaceWarning, setReplaceWarning] = React.useState(false);
   const [rcImportFiles, setRcImportFiles] = React.useState([]);
+  const [manifestFile, setManifestFile] = React.useState(null);
   const [openRcImportPopUp, setOpenRcImportPopUp] = React.useState(false);
 
   const [error, setError] = React.useState({
@@ -358,6 +359,8 @@ export default function NewProject({ call, project, closeEdit }) {
               });
             }
           }
+
+          setManifestFile(manifestPath);
         }
         // Find all USFM files in the extracted directory
         const usfmFiles = allFiles.filter(f => f.toLowerCase().endsWith('.usfm') || f.toLowerCase().endsWith('.sfm'));
@@ -548,7 +551,7 @@ export default function NewProject({ call, project, closeEdit }) {
                   {headerDropDown === 'Juxta' && (<span className="text-error">&nbsp;*</span>)}
                   {call !== 'edit' && headerDropDown === 'Juxta' && (!importedBookCodes || importedBookCodes.length === 0) && (<span className="text-error text-sm">&nbsp;&nbsp;You must provide at least one book resource</span>)}
                   <ImportPopUp open={openPopUp} closePopUp={closeImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} />
-                  <ImportPopUp open={openRcImportPopUp} closePopUp={closeRcImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} initialFiles={rcImportFiles} />
+                  <ImportPopUp open={openRcImportPopUp} closePopUp={closeRcImportPopUp} projectType={headerDropDown} replaceConformation={callReplace} initialFiles={rcImportFiles} manifestFile={manifestFile} />
                 </div>
               </div>
 

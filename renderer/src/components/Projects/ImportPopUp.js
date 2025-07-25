@@ -24,6 +24,7 @@ export default function ImportPopUp(props) {
     projectType,
     replaceConformation,
     initialFiles = [],
+    manifestFile = ''
   } = props;
 
   const cancelButtonRef = useRef(null);
@@ -41,7 +42,8 @@ export default function ImportPopUp(props) {
     actions: {
       setImportedBookCodes,
       setImportedFiles,
-      setCanonSpecification,
+      setManifestFile,
+      setCanonSpecification
     },
   } = useContext(ProjectContext);
 
@@ -261,6 +263,7 @@ export default function ImportPopUp(props) {
     setCanonSpecification(newCanonSpecification);
     setImportedBookCodes(bookCodeList);
     setImportedFiles(files);
+    setManifestFile(manifestFile);
     close();
   };
 

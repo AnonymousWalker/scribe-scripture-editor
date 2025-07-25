@@ -50,6 +50,7 @@ const ProjectContextProvider = ({ children }) => {
   const [selectedProjectMeta, setSelectedProjectMeta] = useState();
   const [importedFiles, setImportedFiles] = useState([]);
   const [importedBookCodes, setImportedBookCodes] = useState([]);
+  const [manifestFile, setManifestFile] = useState(null);
   const [sideBarTab, setSideBarTab] = useState('');
   const [openImportPopUp, setOpenImportPopUp] = useState(false);
   const [openExportPopUp, setOpenExportPopUp] = useState(false);
@@ -282,6 +283,7 @@ const ProjectContextProvider = ({ children }) => {
       language,
       copyright,
       importedFiles,
+      manifestFile,
       call,
       project,
       update,
@@ -382,6 +384,7 @@ const ProjectContextProvider = ({ children }) => {
       setOpenSideBar,
       setNewProjectFields,
       setImportedFiles,
+      setManifestFile,
       setLanguages,
       setEditorSave,
       setSideBarTab,

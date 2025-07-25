@@ -162,11 +162,30 @@ export const saveProjectsMeta = async (projectMetaObj) => {
       }
       logger.debug('saveProjectsMeta.js', 'Creating a burritoFile file.');
 
-      await fs.writeFileSync(path.join(
+      fs.writeFileSync(path.join(
         projectDir,
         `${projectMetaObj.newProjectFields.projectName}_${id}`,
         'metadata.json',
       ), JSON.stringify(burritoFile));
+
+      // Copy manifest.yaml (if any)
+      if (projectMetaObj.manifestFile) {
+        fs.copyFile(
+          projectMetaObj.manifestFile,
+          path.join(
+            projectDir,
+            `${projectMetaObj.newProjectFields.projectName}_${id}`,
+            'manifest.yaml'
+          ),
+          (err) => {
+            if (err) {
+              console.error('Error copying manifest.yaml:', err);
+            } else {
+              console.log('manifest.yaml was copied successfully.');
+            }
+          }
+        );
+      }
 
       // then maybe make a SB usfm
       if (type === 'Audio') {
