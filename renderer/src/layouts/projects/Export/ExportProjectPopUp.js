@@ -238,19 +238,19 @@ export default function ExportProjectPopUp(props) {
       logger.debug('ExportProjectPopUp.js', 'Inside exportUsfmFiles');
       await localforage.getItem('userProfile').then(async (value) => {
         const path = require('path');
-        const newpath = localStorage.getItem('userPath');
-        const folder = path.join(newpath, packageInfo.name, 'users', value.username, 'projects', `${project.name}_${project.id[0]}`);
-        const data = fs.readFileSync(path.join(folder, 'metadata.json'), 'utf-8');
+        const userPath = localStorage.getItem('userPath');
+        const projectFolder = path.join(userPath, packageInfo.name, 'users', value.username, 'projects', `${project.name}_${project.id[0]}`);
+        const data = fs.readFileSync(path.join(projectFolder, 'metadata.json'), 'utf-8');
         const metadata = JSON.parse(data);
         const { username } = value;
         setMetadata({
-          metadata, folder, path, fs, username,
+          metadata, folder: projectFolder, path, fs, username,
         });
         setExportstart(true);
 
         // Find all USFM files with 3-character names
         const { walk } = await import('./ExportUtils');
-        const allFiles = await walk(folder, path, fs);
+        const allFiles = await walk(projectFolder, path, fs);
         // Regex: matches .../ingredients/XXX.usfm where XXX is 3 alphanumeric chars
         const usfmFiles = allFiles.filter((file) => {
           const match = file.match(/[\\/]ingredients[\\/](\w{3})\.usfm$/i);
@@ -259,14 +259,18 @@ export default function ExportProjectPopUp(props) {
         setTotalExports(usfmFiles.length);
         const fse = window.require('fs-extra');
         try {
+          const outputDir = path.join(folderPath, project.name);
+          const manifestFile = path.join(projectFolder, 'manifest.yaml')
+          if (fs.existsSync(manifestFile)) {
+            fse.copySync(manifestFile, path.join(outputDir, 'manifest.yaml'));
+          }
           for (let i = 0; i < usfmFiles.length; i += 1) {
             const file = usfmFiles[i];
             const fileName = file.split(/[\\/]/).pop();
-            const destDir = path.join(folderPath, project.name);
-            if (!fs.existsSync(destDir)) {
-              fs.mkdirSync(destDir, { recursive: true });
+            if (!fs.existsSync(outputDir)) {
+              fs.mkdirSync(outputDir, { recursive: true });
             }
-            fse.copySync(file, path.join(destDir, fileName));
+            fse.copySync(file, path.join(outputDir, fileName));
             setTotalExported(i + 1);
           }
           setNotify('success');
