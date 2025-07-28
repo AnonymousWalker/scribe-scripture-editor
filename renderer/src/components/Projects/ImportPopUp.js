@@ -122,7 +122,7 @@ export default function ImportPopUp(props) {
       switch (projectType) {
       case 'Translation': {
         const usfm = fs.readFileSync(filePath, 'utf8');
-        const cleanedUsfm = usfm.replace(/\\s5\s*\n?/g, '');
+        const cleanedUsfm = usfm.replace(/\\s5\s*\n?/g, '').replace(/\\cl\s*\n?/g, '');
         // const { isValid, validUSFM, bookCode } = await validateUsfm(cleanedUsfm);
         const isValid = true;
         const validUSFM = cleanedUsfm;
