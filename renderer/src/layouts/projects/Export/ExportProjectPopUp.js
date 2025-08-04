@@ -26,6 +26,7 @@ import {
   exportObsDefaultAudio,
 } from './ObsExportUtils';
 import packageInfo from '../../../../../package.json';
+import { parseManifestYaml } from '../../../components/Projects/utils/yamlUtils';
 
 export default function ExportProjectPopUp(props) {
   const {
@@ -260,17 +261,33 @@ export default function ExportProjectPopUp(props) {
         const fse = window.require('fs-extra');
         try {
           const outputDir = path.join(folderPath, project.name);
-          const manifestFile = path.join(projectFolder, 'manifest.yaml')
+          const manifestFile = path.join(projectFolder, 'manifest.yaml');
+          let manifest = null;
           if (fs.existsSync(manifestFile)) {
+            manifest = parseManifestYaml(manifestFile);
             fse.copySync(manifestFile, path.join(outputDir, 'manifest.yaml'));
           }
+          // Map identifiers to manifest paths
+          const manifestProjects = manifest?.projects || [];
+          const idToPath = {};
+          manifestProjects.forEach((proj) => {
+            if (proj.identifier && proj.path) {
+              // Remove leading './' from path if present
+              idToPath[proj.identifier.toUpperCase()] = proj.path.replace(/^\.\//, '');
+            }
+          });
           for (let i = 0; i < usfmFiles.length; i += 1) {
             const file = usfmFiles[i];
-            const fileName = file.split(/[\\/]/).pop();
+            const fileName = file.split(/[\\/]/).pop(); // e.g. MAT.usfm
+            // Find manifest project path for this file
+            const identifier = fileName.replace('.usfm', '').toUpperCase();
+            const manifestPath = idToPath[identifier];
             if (!fs.existsSync(outputDir)) {
               fs.mkdirSync(outputDir, { recursive: true });
             }
-            fse.copySync(file, path.join(outputDir, fileName));
+            // Copy file to output folder
+            const destFileName = manifestPath || fileName;
+            fse.copySync(file, path.join(outputDir, destFileName));
             setTotalExported(i + 1);
           }
           setNotify('success');
