@@ -290,6 +290,18 @@ export default function ExportProjectPopUp(props) {
             fse.copySync(file, path.join(outputDir, destFileName));
             setTotalExported(i + 1);
           }
+          if (checkZip) {
+            const AdmZip = window.require('adm-zip');
+            const zip = new AdmZip();
+            zip.addLocalFolder(outputDir);
+            zip.writeZip(path.join(folderPath, `${project.name}.zip`));
+            // Optionally, delete the outputDir after zipping
+            await fs.rmdirSync(outputDir, { recursive: true }, async (err) => {
+              if (err) {
+                throw new Error(`Remove Exported Dir failed :  ${err}`);
+              }
+            });
+          }
           setNotify('success');
           setSnackText(t('dynamic-msg-export-success'));
           setOpenSnackBar(true);
